@@ -271,6 +271,14 @@
             if (e.key === 'Enter') { e.preventDefault(); markSeen(); }
         });
         function updateFocus() { [0,1,2].forEach(i => document.getElementById(`sec-${i}`).classList.toggle('focused', i === currentSection)); }
+
+        window.addEventListener('beforeunload', (e) => {
+            const hasActivity = state.seen.length > 0 || state.starred.length > 0 || Object.keys(state.notes).some(k => state.notes[k]);
+            if (hasActivity) {
+                e.preventDefault();
+                e.returnValue = 'You have unsaved curation work. Export your log before leaving!';
+            }
+        });
     </script>
 </body>
 </html>
