@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>VIBE Station - Pro OS</title>
+    <style>
+        :root { --bg: #050505; --panel: #111; --accent: #0095f6; --text: #eee; --border: #222; --star: #ffcc00; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* --- LANDING --- */
+        #landing { position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; transition: 0.5s; }
+        .landing-container { max-width: 900px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px; }
+        .brand-title { font-size: 42px; font-weight: 900; color: var(--accent); margin: 0; }
+        .brand-tagline { color: #555; font-size: 14px; margin-bottom: 20px; }
+        details { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px; width: 100%; box-sizing: border-box; }
+        summary { cursor: pointer; font-weight: bold; color: var(--accent); list-style: none; display: flex; justify-content: space-between; }
+        .tutorial-video { width: 100%; max-width: 280px; aspect-ratio: 9/16; background: #000; border-radius: 12px; border: 1px solid #333; margin-top: 10px; }
+        .drop-box { border: 2px dashed #444; padding: 30px; border-radius: 20px; cursor: pointer; text-align: center; width: 100%; box-sizing: border-box; transition: 0.3s; }
+        .drop-box:hover { border-color: var(--accent); background: #111; }
+        .footer-links { margin-top: 50px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; border-top: 1px solid #222; padding-top: 20px; font-size: 13px; color: #666; }
+        .btn-coffee { background: #FFDD00; color: #000; padding: 12px 25px; border-radius: 10px; font-weight: bold; text-decoration: none; display: inline-block; }
+
+        /* --- DASHBOARD --- */
+        .hidden { display: none !important; }
+        .col-lib { width: 220px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .col-video { flex: 2.5; display: flex; flex-direction: column; background: #000; border-right: 1px solid var(--border); }
+        .col-control { width: 340px; background: #111; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .col-archive { width: 300px; background: #0a0a0a; display: flex; flex-direction: column; }
+        .focused { outline: 2px solid var(--accent) !important; background: rgba(0, 149, 246, 0.05); }
+
+        .header { padding: 12px; border-bottom: 1px solid var(--border); background: #161616; flex-shrink: 0; }
+        .scroll { flex: 1; overflow-y: auto; padding: 10px; }
+        .item { padding: 10px; background: #1a1a1a; margin-bottom: 6px; border-radius: 8px; cursor: pointer; font-size: 11px; border-left: 4px solid transparent; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .item.active { background: #222; border-left-color: var(--accent) !important; font-weight: bold; }
+        iframe { width: 100%; height: 95%; max-width: 400px; border-radius: 15px; border: 2px solid #333; background: #000; }
+        .stamp-box { display: flex; flex-wrap: wrap; gap: 8px; background: #000; padding: 12px; border-radius: 10px; border: 1px solid #222; }
+        .emoji-btn { background: #1a1a1a; border: 1px solid #333; padding: 8px; border-radius: 8px; cursor: pointer; font-size: 20px; min-width: 45px; position: relative; }
+        .emoji-btn.active { background: var(--accent); border-color: white; }
+        .emoji-key { position: absolute; top: 2px; right: 4px; font-size: 9px; color: #555; }
+        textarea { width: 100%; height: 180px; background: #000; color: #fff; border: 1px solid #333; border-radius: 8px; padding: 12px; font-family: inherit; font-size: 14px; resize: none; }
+        .btn-save { background: #28a745; color: white; padding: 15px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; width: 100%; }
+        .archive-item { border-bottom: 1px solid #1a1a1a; padding: 10px; cursor: pointer; display: flex; gap: 8px; border-left: 4px solid transparent; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+    <div id="landing">
+        <h1 class="brand-title">VIBE Station</h1>
+        <p class="brand-tagline">CURATION OPERATING SYSTEM v5.0</p>
+        <div class="landing-container">
+            <div class="info-side">
+                <details open><summary>COMO USAR</summary><p style="font-size: 13px; line-height: 1.5;">1. Instagram > Tu Actividad > Descargar Información.<br>2. Pedí tus <b>"Guardados"</b> (JSON/HTML).<br>3. Descomprimí y buscá <b>posts.json</b>.<br>4. Arrastralo en la caja de la derecha.</p></details>
+                <details><summary>Navegación Ninja ⌨️</summary><p style="font-size: 13px; line-height: 1.5;"><b>↑ / ↓</b>: Cambiar video<br><b>← / →</b>: Cambiar sección<br><b>1-9</b>: Asignar Emoji<br><b>S</b>: Favorito | <b>Enter</b>: Guardar</p></details>
+                <details><summary>PARA QUÉ?</summary><p style="font-size: 13px; line-height: 1.5;">VIBE Station es una herramienta de curación profunda. Instagram es un cementerio de contenido; aquí le das una segunda vida con taxonomía y notas.</p></details>
+            </div>
+            <div class="action-side">
+                <details><summary>TUTORIAL VIDEO</summary><video class="tutorial-video" controls><source src="#" type="video/mp4">Tu navegador no soporta video.</video></details>
+                <div class="drop-box" onclick="document.getElementById('file-posts').click()"><b style="color:var(--accent)">1. CARGAR POSTS</b><br><span id="posts-status" style="font-size:11px;color:#666;">posts.json o html</span></div>
+                <input type="file" id="file-posts" class="hidden" accept=".json,.html">
+                <div class="drop-box" onclick="document.getElementById('file-log').click()"><b style="color:#888">2. IMPORTAR LOG</b><br><span id="log-status" style="font-size:11px;color:#444;">vibe_research_log.json (Opcional)</span></div>
+                <input type="file" id="file-log" class="hidden" accept=".json">
+                <button id="btn-start" class="btn-save" style="background: var(--accent); display:none; margin-top:20px;" onclick="startEngine()">ARRANCAR ESTACIÓN 🚀</button>
+            </div>
+        </div>
+        <div class="footer-links">
+            <a href="https://cafecito.app/activaprod" target="_blank" class="btn-coffee">☕ DONAR CAFECITO</a>
+            <a href="mailto:camussisofia@gmail.com">camussisofia@gmail.com</a>
+            <span>hecho con ♡ por Sofi</span>
+        </div>
+    </div>
+
+    <div id="dashboard" class="hidden" style="display:contents;">
+        <div class="col-lib" id="sec-0">
+            <div class="header">
+                <div style="display:flex; gap:5px; margin-bottom:5px;">
+                    <select id="catFilter" onchange="renderPending()" style="flex:1; background:#000; color:#fff; border:1px solid #333; font-size:11px;"></select>
+                    <button onclick="manageCats()" title="Gestionar Categorías" style="background:#333; color:white; border:none; padding:0 8px; border-radius:4px; cursor:pointer;">⚙️</button>
+                </div>
+                <select id="yearFilter" onchange="renderPending()" style="width:100%; background:#000; color:#fff; border:1px solid #333; font-size:11px;"></select>
+                <button onclick="oraclePick()" style="width:100%; margin-top:8px; background:#a855f7; border:none; color:white; padding:8px; border-radius:6px; font-size:10px; cursor:pointer;">✨ ORACLE</button>
+            </div>
+            <div class="scroll" id="listPending"></div>
+        </div>
+        <div class="col-video"><div style="flex:1; display:flex; align-items:center; justify-content:center; padding:10px;" id="player"></div></div>
+        <div class="col-control" id="sec-1">
+            <div class="header" style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="curOwner" style="color:var(--accent); font-weight:bold; overflow:hidden; text-overflow:ellipsis; max-width:200px;">@user</span>
+                <button id="starBtn" onclick="toggleStar()" style="background:none; border:none; color:var(--star); font-size:24px; cursor:pointer;">☆</button>
+            </div>
+            <div class="control-inner">
+                <select id="reCat" onchange="moveCat()" style="width:100%; background:#000; color:#fff; border:1px solid #333; margin-bottom:10px;"></select>
+                <div class="stamp-box" id="fullStampList"></div>
+                <textarea id="notesArea" placeholder="Notas de campo..."></textarea>
+                <button class="btn-save" onclick="markSeen()">GUARDAR (Enter) ✔️</button>
+            </div>
+        </div>
+        <div class="col-archive" id="sec-2">
+            <div class="header"><h4 style="margin:0; font-size:10px; color:#555;">ARCHIVO</h4></div>
+            <div class="scroll" id="listSeen"></div>
+            <div style="padding:10px;"><button onclick="exportData()" style="width:100%; background:white; color:black; font-weight:bold; padding:10px; border-radius:6px; cursor:pointer; font-size:11px;">EXPORTAR LOG</button></div>
+        </div>
+    </div>
+
+    <script>
+        let ALL_POSTS = [];
+        let state = { seen: [], starred: [], notes: {}, manual_cats: {}, emojis: {}, custom_categories: [], custom_emojis: [] };
+        let currentPost = null;
+        let selectedEmoji = "";
+        let currentSection = 0;
+
+        // --- SISTEMA DINÁMICO DE CATEGORÍAS ---
+        function guessCategory(u) {
+            u = u.toLowerCase();
+            if (u.match(/ai|tech|code|dev|bot|nvidia/)) return "AI & Tech";
+            if (u.match(/design|art|brand|noir|creative|visual/)) return "Design";
+            if (u.match(/food|chef|recipe|cook|kitchen/)) return "Food";
+            return "Other";
+        }
+
+        const SUGGESTED_CATS = ["Wellbeing & Body", "Sports", "Knowledge & Books", "Business & Strategy", "Regenerative & Systems", "Architecture", "Music & Sound", "Travel", "Tools & Hacks"];
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playClick() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        document.getElementById('file-posts').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const raw = e.target.files[0].name.endsWith('.json') ? JSON.parse(evt.target.result) : processHtmlRaw(evt.target.result);
+                ALL_POSTS = raw.map(p => ({ ...p, username: p.username || 'user', full_date: p.date || "2026-01-01", year: (p.date || "2026").split('-')[0], category: guessCategory(p.username || '') }));
+                document.getElementById('posts-status').innerText = "✅ Posts OK"; checkReady();
+            };
+            reader.readAsText(e.target.files[0]);
+        };
+
+        document.getElementById('file-log').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (evt) => { state = { ...state, ...JSON.parse(evt.target.result) }; document.getElementById('log-status').innerText = "✅ Log OK"; checkReady(); };
+            reader.readAsText(e.target.files[0]);
+        };
+
+        function processHtmlRaw(html) {
+            const parser = new DOMParser(); const doc = parser.parseFromString(html, 'text/html');
+            return Array.from(doc.querySelectorAll('a')).filter(l => l.href.includes('instagram.com/p/')).map(l => {
+                let user = l.innerText.trim().replace('@','');
+                if (user.includes('http') || user.length < 2) user = "post_" + (l.href.split('/').slice(-2)[0]);
+                return { url: l.href, username: user, date: l.parentElement.innerText.match(/\d{4}-\d{2}-\d{2}/)?.[0] || "2026-01-01" };
+            });
+        }
+
+        function checkReady() { if(ALL_POSTS.length > 0) document.getElementById('btn-start').style.display = 'block'; }
+        function startEngine() { document.getElementById('landing').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); init(); updateFocus(); }
+
+        function init() {
+            updateSelectors();
+            const years = [...new Set(ALL_POSTS.map(p => p.year))].sort().reverse();
+            document.getElementById('yearFilter').innerHTML = `<option value="ALL">TODOS LOS AÑOS</option>` + years.map(y => `<option value="${y}">${y}</option>`).join('');
+            renderEmojiPanel(); renderPending(); renderArchive();
+        }
+
+        function updateSelectors() {
+            const cats = [...new Set([...ALL_POSTS.map(p => p.category), ...state.custom_categories])].sort();
+            const opt = cats.map(c => `<option value="${c}">${c}</option>`).join('');
+            document.getElementById('catFilter').innerHTML = opt;
+            document.getElementById('reCat').innerHTML = opt;
+        }
+
+        function manageCats() {
+            const mode = prompt("Elegí una opción:\\n1: Crear Manual\\n2: Generar Sugerencias Pro\\n3: Borrar Existente");
+            if(mode === "1") {
+                const n = prompt("Nombre nueva categoría:");
+                if(n) { state.custom_categories.push(n); updateSelectors(); }
+            } else if(mode === "2") {
+                const confirmSug = confirm("¿Querés agregar sugerencias (Wellbeing, Regenerative, etc.)?");
+                if(confirmSug) {
+                    state.custom_categories = [...new Set([...state.custom_categories, ...SUGGESTED_CATS])];
+                    updateSelectors();
+                }
+            } else if(mode === "3") {
+                const del = prompt("Nombre exacto de la categoría a borrar:");
+                state.custom_categories = state.custom_categories.filter(c => c !== del);
+                updateSelectors();
+            }
+        }
+
+        function getCatColor(cat) {
+            let hash = 0; for (let i = 0; i < cat.length; i++) hash = cat.charCodeAt(i) + ((hash << 5) - hash);
+            return `hsl(${Math.abs(hash) % 360}, 70%, 50%)`;
+        }
+
+        function renderEmojiPanel() {
+            const all = ['⭐','‼️','✅','📄','📹', ...state.custom_emojis].slice(0, 9);
+            document.getElementById('fullStampList').innerHTML = all.map((e, i) => `
+                <button class="emoji-btn ${selectedEmoji === e ? 'active' : ''}" onclick="setEmoji('${e}')">${e}<span class="emoji-key">${i+1}</span></button>
+            `).join('') + `<input type="text" id="emojiIn" placeholder="+" style="width:40px;background:none;border:1px dashed #444;color:white;text-align:center;border-radius:8px;" onchange="addEmoji(this.value)">`;
+        }
+
+        function renderPending() {
+            const cat = document.getElementById('catFilter').value;
+            const year = document.getElementById('yearFilter').value;
+            const filtered = ALL_POSTS.filter(p => (state.manual_cats[p.url] || p.category) === cat && !state.seen.includes(p.url) && (year === "ALL" || p.year === year));
+            document.getElementById('listPending').innerHTML = filtered.map(p => `
+                <div class="item ${currentPost?.url === p.url ? 'active' : ''}" style="border-left-color:${getCatColor(state.manual_cats[p.url] || p.category)}" onclick="loadPost('${p.url}')">
+                    @${p.username}<br><small style="color:#555;">${p.full_date.substring(0,10)}</small>
+                </div>
+            `).join('');
+        }
+
+        function loadPost(url) {
+            playClick(); currentPost = ALL_POSTS.find(p => p.url === url);
+            document.getElementById('player').innerHTML = `<iframe src="${url.split('?')[0]}embed/" style="border-color:${getCatColor(state.manual_cats[url] || currentPost.category)}"></iframe>`;
+            document.getElementById('curOwner').innerText = "@" + currentPost.username;
+            document.getElementById('notesArea').value = state.notes[url] || "";
+            document.starBtnIcon = state.starred.includes(url) ? "★" : "☆"; // Mock para icono
+            document.getElementById('starBtn').innerText = state.starred.includes(url) ? "★" : "☆";
+            selectedEmoji = state.emojis[url] || ""; renderEmojiPanel(); renderPending();
+        }
+
+        function setEmoji(e) { selectedEmoji = e; playClick(); renderEmojiPanel(); }
+        function addEmoji(v) { if(v) { state.custom_emojis.push(v); renderEmojiPanel(); } document.getElementById('emojiIn').value = ""; }
+        function toggleStar() { const u = currentPost.url; state.starred.includes(u) ? state.starred = state.starred.filter(x => x !== u) : state.starred.push(u); loadPost(u); }
+        function moveCat() { state.manual_cats[currentPost.url] = document.getElementById('reCat').value; renderPending(); loadPost(currentPost.url); }
+
+        function markSeen() {
+            if(!currentPost) return;
+            state.seen.push(currentPost.url); state.notes[currentPost.url] = document.getElementById('notesArea').value; state.emojis[currentPost.url] = selectedEmoji;
+            renderPending(); renderArchive();
+            const cat = document.getElementById('catFilter').value;
+            const next = ALL_POSTS.find(p => (state.manual_cats[p.url] || p.category) === cat && !state.seen.includes(p.url));
+            if(next) loadPost(next.url);
+        }
+
+        function renderArchive() {
+            const seen = ALL_POSTS.filter(p => state.seen.includes(p.url));
+            document.getElementById('listSeen').innerHTML = seen.reverse().map(p => `
+                <div class="archive-item" onclick="loadPost('${p.url}')" style="border-left-color:${getCatColor(state.manual_cats[p.url] || p.category)}">
+                    <div style="font-size:18px;">${state.emojis[p.url] || '📝'}</div>
+                    <div style="flex:1;overflow:hidden;"><b style="font-size:11px;">@${p.username}</b><div style="font-size:9px;color:#555;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;">${state.notes[p.url] || '...'}</div></div>
+                </div>
+            `).join('');
+        }
+
+        function oraclePick() { const pending = ALL_POSTS.filter(p => !state.seen.includes(p.url)); if(pending.length > 0) loadPost(pending[Math.floor(Math.random()*pending.length)].url); }
+        function exportData() { playClick(); const dl = document.createElement('a'); dl.setAttribute("href", "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state))); dl.setAttribute("download", "vibe_research_log.json"); dl.click(); }
+
+        window.addEventListener('keydown', (e) => {
+            if (document.getElementById('dashboard').classList.contains('hidden')) return;
+            if (document.activeElement.tagName === 'TEXTAREA' && e.key !== 'Enter') return;
+            if (e.key.toLowerCase() === 's') { e.preventDefault(); toggleStar(); }
+            if (e.code.startsWith('Digit')) { 
+                const num = parseInt(e.key); const all = ['⭐','‼️','✅','📄','📹', ...state.custom_emojis];
+                if(num > 0 && num <= all.length) setEmoji(all[num-1]);
+            }
+            if (e.key === 'ArrowRight') { currentSection = Math.min(currentSection + 1, 2); updateFocus(); }
+            if (e.key === 'ArrowLeft') { currentSection = Math.max(currentSection - 1, 0); updateFocus(); }
+            if (currentSection === 0 && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                const cat = document.getElementById('catFilter').value;
+                const pending = ALL_POSTS.filter(p => (state.manual_cats[p.url] || p.category) === cat && !state.seen.includes(p.url));
+                const idx = pending.indexOf(currentPost);
+                if (e.key === 'ArrowDown' && idx < pending.length - 1) loadPost(pending[idx+1].url);
+                if (e.key === 'ArrowUp' && idx > 0) loadPost(pending[idx-1].url);
+            }
+            if (e.key === 'Enter') { e.preventDefault(); markSeen(); }
+        });
+        function updateFocus() { [0,1,2].forEach(i => document.getElementById(`sec-${i}`).classList.toggle('focused', i === currentSection)); }
+    </script>
+</body>
+</html>
